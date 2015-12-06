@@ -79,4 +79,12 @@ public class Client {
     public String toString() {
         return socket.toString();
     }
+    
+    public static void main(String[] args) {
+        try {
+            Client client = new Client(new Socket("localHost",45000));
+        } catch (IOException e) {
+            
+        }
+    }
 }
