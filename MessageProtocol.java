@@ -10,31 +10,38 @@ package ChatAssignment;
  * @author YaronK
  */
 public class MessageProtocol {
-    final static int textMessage = 0,disconnectMessage=1; 
     String message;
-    int typeOfMessage;
+    String destenation;
+    String sender;
 
     public MessageProtocol() {
-    
+        
     }
 
-    
-    public MessageProtocol(String message, int typeOfMessage) {
+    public MessageProtocol(String message, String destenation, String sender) {
         this.message = message;
-        this.typeOfMessage = typeOfMessage;
+        this.destenation = destenation;
+        this.sender = sender;
     }
 
-    public static int getTextMessage() {
-        return textMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public int getTypeOfMessage() {
-        return typeOfMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
-    
-    
-    
-    
-    
-    
+
+    public String getDestenation() {
+        return destenation;
+    }
+
+    public void setDestenation(String destenation) {
+        this.destenation = destenation;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+ 
 }
