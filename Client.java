@@ -97,7 +97,14 @@ public class Client extends Thread {
             while(true) {
                 try {
                     String msg = (String) inGoing.readObject();
-                    cGUI.append(msg);
+                    if (msg.startsWith("+add")) {
+                        cGUI.addToList(msg.substring(5,msg.length()));
+                        System.out.println("Added "+msg.substring(5,msg.length())+" to List");
+                    }
+                    else if (msg.startsWith("-remove")) {
+                        cGUI.removeFromList(msg.substring(7, msg.length()));
+                    }
+                    else cGUI.append(msg);
                 } catch (IOException | ClassNotFoundException e) {
                     System.err.println("Failed Recieving Object from Server");
                     return;

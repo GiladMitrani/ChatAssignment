@@ -43,5 +43,4 @@ public class MessageProtocol {
     public String getSender() {
         return sender;
     }
- 
 }

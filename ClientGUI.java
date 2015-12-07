@@ -2,12 +2,12 @@ package ChatAssignment;
 
 
 import java.awt.event.ActionEvent;
-import java.io.Serializable;
+import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 
-public class ClientGUI extends javax.swing.JFrame implements Serializable {
+public class ClientGUI extends javax.swing.JFrame {
     
-
+    static DefaultListModel dynamicList = new DefaultListModel();
     static Client client;
     String userName="Gilad";
 
@@ -86,11 +86,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
             }
         });
 
-        OnlineList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        OnlineList.setModel(dynamicList);
         OnlineList.setSelectionModel(new ToggleSelectionModel());
         jScrollPane6.setViewportView(OnlineList);
 
@@ -207,15 +203,12 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        
         //</editor-fold>
         //</editor-fold>
 
@@ -226,32 +219,24 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
             }
         });
     }
+    
+    void addToList(Object element) {
+        dynamicList.addElement(element);
+    }
+    
+    void removeFromList(Object element) {
+        dynamicList.removeElement(element);
+    }
+    
+    void removeFromListAt(int index) {
+        dynamicList.removeElementAt(index);
+    }
 
     void append(String msg) {
         // TODO: add time stamp
         ClientLog.append("> "+msg+"\n");
     }
     
-    /*
-    method that convert pressing to massage;
-    */
-    public void MessageConvert(ActionEvent e) {
-        Object button = e.getSource();
-        MessageProtocol message = new MessageProtocol();
-        // user press the Disconnect button
-        if (button == ButtonDisconnect) {
-            message.typeOfMessage = message.disconnectMessage;
-            message.message = "";
-            return;
-        }
-        // user press send
-        if (button == ButtonSend)
-            
-            message.typeOfMessage = message.textMessage;
-            message.message =TextUserInput.getText();
-            return;
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonConnect;
     private javax.swing.JButton ButtonDisconnect;
@@ -276,6 +261,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
     // End of variables declaration//GEN-END:variables
 
     class ToggleSelectionModel extends DefaultListSelectionModel {
+
         public void setSelectionInterval(int index0, int index1) {
             if (isSelectedIndex(index0)) {
                 super.removeSelectionInterval(index0, index1);

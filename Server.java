@@ -20,7 +20,7 @@ public class Server extends Thread {
         serverSocket = null;
         clientSocket = null;
         isStopped = true;
-        clients = new ArrayList<>();
+        clients = new ArrayList<ClientThread>();
     }
 
     /* Methods: */
@@ -46,6 +46,7 @@ public class Server extends Thread {
                 ClientThread client = new ClientThread(clientSocket);
                 clients.add(client);
                 client.start();
+                client.outGoing.writeObject(new String("+add "+client.userName));
             }
             /* Server Stopped */
             try {
@@ -84,7 +85,7 @@ public class Server extends Thread {
         sGUI.append(msg);
         System.out.println(msg);
     }
-
+          
     private synchronized void message(MessageProtocol msg) {
         // TODO: Complete MessageProtocol Class
     }
