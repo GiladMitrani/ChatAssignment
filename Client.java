@@ -10,28 +10,32 @@ public class Client implements Serializable {
     
     /* Privates: */        
     private static final long   CLIENT_SLEEP = 200;
-    private Socket              socket;      
+            Socket              socket;      
     private boolean             connected;
-    private ClientThread        clientThread;
+            ClientThread        clientThread;
     private ClientGUI           cGUI;
     
     // NESTED CLASS START;
     public class ClientThread extends Thread {
         
         /* Privates: */
-        private ObjectInputStream in;
-        private ObjectOutputStream out;
+        ObjectInputStream in;
+        ObjectOutputStream out;
         
         /* Methods: */
         @Override
         public void run() {
+            display("Setting up input and output");
             try {
-                in = new ObjectInputStream(socket.getInputStream());
-                out = new ObjectOutputStream(socket.getOutputStream()); //
+                out = new ObjectOutputStream(socket.getOutputStream());
+                display("Successfully Connected Output");
+//                in  = new ObjectInputStream(socket.getInputStream());
+//                display("Successfully Connected Input");
             } catch (IOException e) {
                 System.err.println("Failed getting stream from "+this);
                 return;
             }
+            System.out.println("aaa");
             
             /* Stream Successfully Connected */
             display(this+" has succesfully connected input and output");
@@ -71,7 +75,6 @@ public class Client implements Serializable {
         socket=newSocket;
         connected=true;
         clientThread = new ClientThread();
-        clientThread.start();
     }
     
     /* Methods: */
@@ -79,7 +82,12 @@ public class Client implements Serializable {
         return connected;
     }
     
+    public void start() {
+        clientThread.start();
+    }
+    
     void display(String msg) {
+        System.out.println(msg);
         cGUI.append(msg);
     }
     

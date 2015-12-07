@@ -1,8 +1,9 @@
 package ChatAssignment;
 
+import java.io.Serializable;
 import java.net.Socket;
 
-public class ClientGUI extends javax.swing.JFrame {
+public class ClientGUI extends javax.swing.JFrame implements Serializable {
     
     static Client client;
 
@@ -16,6 +17,7 @@ public class ClientGUI extends javax.swing.JFrame {
         } catch (Exception e) {
             System.err.println("Failed Creating Client!");
         }
+        client.start();
     }
 
     /**
@@ -212,8 +214,6 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
     }
-    
-    
     
     void append(String msg) {
         // TODO: add time stamp

@@ -3,20 +3,17 @@ package ChatAssignment;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-
-public class Server extends Thread {
+public class Server {
     
     /* Privates: */
-    private static final int    SERVER_PORT = 45000; 
-    private static final long   SERVER_SLEEP = 200; 
-    private ServerSocket        serverSocket = null;    
-    private Socket              clientSocket = null;
-    private boolean             isStopped = false;              
-    private ArrayList<Client>   clients = new ArrayList<>();
-    private ServerGUI           sGUI;
+    private static final int            SERVER_PORT = 45000; 
+    private static final long           SERVER_SLEEP = 200; 
+    private ServerSocket                serverSocket = null;    
+    private Socket                      clientSocket = null;
+    private boolean                     isStopped = false;              
+    private ArrayList<ClientThread>     clients = new ArrayList<>();
+    private ServerGUI                   sGUI;
 
     /* Constructor: */
     public Server(ServerGUI sGUI) {
@@ -34,8 +31,7 @@ public class Server extends Thread {
     
    
     /* Methods: */
-    @Override
-    public void run() {
+    public void start() {
         /* Chat Room Created */
         display("Chat Room has been created!");
         // TODO: add write to server Text area!
@@ -46,23 +42,24 @@ public class Server extends Thread {
             
             try {
                 clientSocket = serverSocket.accept(); // Listens and connects a new client socket
-            } catch (IOException e) { // accept() failed.
+                display("Client Socket established on Port: "+clientSocket.getPort());
+                /* Server Recieve Client Data */
+                display("Waiting for Client Data:");
+                ObjectInputStream inGoing = new ObjectInputStream(clientSocket.getInputStream());
+//              ObjectOutputStream outGoing = new ObjectOutputStream(clientSocket.getOutputStream());
+                Client client = (Client)inGoing.readObject();
+                inGoing.close();
+                /* Client Successfully Connected */
+                clients.add(client);
+                
+            } catch (IOException | ClassNotFoundException e) { // accept() failed.
                 if (isStopped()) {
                     display("Server Stopped");
                     return;
                 }
                 throw new RuntimeException("Could not accept client!", e);    
             }
-            
-            /* Server Recieve Client Data */
-            display("Getting Client Data:");
-            Client client = getClientData(clientSocket);
              
-            /* Client Successfully Connected */
-            display("Client "+clientSocket+"has connected");
-            
-            /* Add New Client to List */
-            clients.add(client);
             
             /* Server Sleep */
             try {
@@ -158,5 +155,52 @@ public class Server extends Thread {
 //        Server server = new Server();
 //        server.start();
     }
+    
+    // NESTED CLASS START;
+    public class ClientThread extends Thread {
+        
+        /* Privates: */
+        Socket socket;
+        ObjectInputStream in;
+        ObjectOutputStream out;
+        
+        /* Methods: */
+        @Override
+        public void run() {
+            display("Setting up input and output");
+            try {
+                out = new ObjectOutputStream(socket.getOutputStream());
+                display("Successfully Connected Output");
+//                in  = new ObjectInputStream(socket.getInputStream());
+//                display("Successfully Connected Input");
+            } catch (IOException e) {
+                System.err.println("Failed getting stream from "+this);
+                return;
+            }
+            System.out.println("aaa");
+            
+            /* Stream Successfully Connected */
+            display(this+" has succesfully connected input and output");
+            // TODO: Implement communication to server TextArea;
+            
+            /* Client Send Data to Server */ 
+            display("Trying to send Client Data");
+            try {
+            out.writeObject(Client.this);
+            } catch (IOException e) {
+                System.err.println("Failed Sending Client Data!");
+            }
+            display("Client Data Sent Successfully!");
+                     
+            /* Client Sleep */
+            try {
+                Thread.sleep(CLIENT_SLEEP);
+            } catch (InterruptedException ex) {
+                System.err.println(this+" has input interruption");
+            } 
+        }
+    } // NESTED CLASS END;
+    
+    
 
 }
