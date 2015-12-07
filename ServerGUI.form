@@ -95,7 +95,7 @@
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="Integer.toString(Server.SERVER_PORT)" type="code"/>
+          <Connection code="Integer.toString(Server.getPort())" type="code"/>
         </Property>
       </Properties>
     </Component>

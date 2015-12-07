@@ -9,6 +9,6 @@ package ChatAssignment;
  *
  * @author YaronK
  */
-public class MassageProtocol {
+public class MessageProtocol {
     
 }

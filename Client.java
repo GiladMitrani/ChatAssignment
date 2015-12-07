@@ -3,13 +3,17 @@ package ChatAssignment;
 import java.io.*;
 import java.net.*;
 
-public class Client {
+public class Client implements Serializable {
+    
+    /* Serial: */
+    protected static final long SerialVersionUID = 1113377L;
     
     /* Privates: */        
     private static final long   CLIENT_SLEEP = 200;
     private Socket              socket;      
     private boolean             connected;
     private ClientThread        clientThread;
+    private ClientGUI           cGUI;
     
     // NESTED CLASS START;
     public class ClientThread extends Thread {
@@ -30,8 +34,17 @@ public class Client {
             }
             
             /* Stream Successfully Connected */
-            System.out.println(this+" has succesfully connected input and output");
+            display(this+" has succesfully connected input and output");
             // TODO: Implement communication to server TextArea;
+            
+            /* Client Send Data to Server */ 
+            display("Trying to send Client Data");
+            try {
+            out.writeObject(Client.this);
+            } catch (IOException e) {
+                System.err.println("Failed Sending Client Data!");
+            }
+            display("Client Data Sent Successfully!");
                      
             /* Client Sleep */
             try {
@@ -39,22 +52,22 @@ public class Client {
             } catch (InterruptedException ex) {
                 System.err.println(this+" has input interruption");
             } 
-            
-            /* Client Code */ 
+        }
+    } // NESTED CLASS END;
+    
+    /* Client Code */ 
             // TODO: Implement send message
             // TODO: Implement recieve TextArea
             // TODO: Implement leave server
             
             // PlaceHolder:
-            PrintWriter outGoing = new PrintWriter(out, true);
-            BufferedReader inGoing = new BufferedReader(new InputStreamReader(in));
-            
-            
-        }
-    } // NESTED CLASS END;
+//            PrintWriter outGoing = new PrintWriter(out, true);
+//            BufferedReader inGoing = new BufferedReader(new InputStreamReader(in));
     
     /* Constructor: */
-    public Client(Socket newSocket) {
+       
+    public Client(Socket newSocket, ClientGUI cGUI) {
+        this.cGUI = cGUI;
         socket=newSocket;
         connected=true;
         clientThread = new ClientThread();
@@ -66,10 +79,20 @@ public class Client {
         return connected;
     }
     
-    public void removeClient() {
+    void display(String msg) {
+        cGUI.append(msg);
+    }
+    
+    ClientGUI getGUI() {
+        return cGUI;
+    }
+    
+    void removeClient() {
         try {
             connected = false;
             socket.close();
+            this.clientThread.in.close();
+            this.clientThread.out.close();
         } catch (IOException e) {
             System.err.println("Failed to close "+this);
         }
@@ -81,10 +104,6 @@ public class Client {
     }
     
     public static void main(String[] args) {
-        try {
-            Client client = new Client(new Socket("localHost",45000));
-        } catch (IOException e) {
-            
-        }
+
     }
 }

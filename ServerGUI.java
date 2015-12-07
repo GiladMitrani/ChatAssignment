@@ -9,6 +9,7 @@ import java.net.InetAddress;
 public class ServerGUI extends javax.swing.JFrame {
     
     InetAddress localHost;
+    static Server server;
 
     /**
      * Creates new form ServerGUI
@@ -20,6 +21,7 @@ public class ServerGUI extends javax.swing.JFrame {
             System.err.println("Failed getting local host!");
         }
         initComponents();
+        server = new Server(this);
     }
 
     /**
@@ -52,7 +54,7 @@ public class ServerGUI extends javax.swing.JFrame {
         ButtonStop.setText("Stop");
 
         jTextField1.setEditable(false);
-        jTextField1.setText(Integer.toString(Server.SERVER_PORT));
+        jTextField1.setText(Integer.toString(Server.getPort()));
 
         jTextField2.setEditable(false);
         jTextField2.setText(localHost.getHostAddress());
@@ -133,8 +135,14 @@ public class ServerGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ServerGUI().setVisible(true);
+                server.start();
             }
         });
+    }
+    
+    void append(String msg) {
+        // TODO: add time stamp
+        ServerLog.append("> "+msg+"\n");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
