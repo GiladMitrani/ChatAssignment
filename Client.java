@@ -3,62 +3,29 @@ package ChatAssignment;
 import java.io.*;
 import java.net.*;
 
-public class Client {
+public class Client extends Thread {
     
     /* Privates: */        
-    private static final long   CLIENT_SLEEP = 200;
+    private int                 SERVER_PORT = 44000;
+    private ObjectInputStream   inGoing;
+    private ObjectOutputStream  outGoing;
+    private String              userName;
     private Socket              socket;      
     private boolean             connected;
-    private ClientThread        clientThread;
+    private ClientGUI           cGUI;
     
-    // NESTED CLASS START;
-    public class ClientThread extends Thread {
-        
-        /* Privates: */
-        private ObjectInputStream in;
-        private ObjectOutputStream out;
-        
-        /* Methods: */
-        @Override
-        public void run() {
-            try {
-                in = new ObjectInputStream(socket.getInputStream());
-                out = new ObjectOutputStream(socket.getOutputStream()); //
-            } catch (IOException e) {
-                System.err.println("Failed getting stream from "+this);
-                return;
-            }
-            
-            /* Stream Successfully Connected */
-            System.out.println(this+" has succesfully connected input and output");
-            // TODO: Implement communication to server TextArea;
-                     
-            /* Client Sleep */
-            try {
-                Thread.sleep(CLIENT_SLEEP);
-            } catch (InterruptedException ex) {
-                System.err.println(this+" has input interruption");
-            } 
-            
-            /* Client Code */ 
+    
+    
+    /* Client Code */ 
             // TODO: Implement send message
             // TODO: Implement recieve TextArea
             // TODO: Implement leave server
-            
-            // PlaceHolder:
-            PrintWriter outGoing = new PrintWriter(out, true);
-            BufferedReader inGoing = new BufferedReader(new InputStreamReader(in));
-            
-            
-        }
-    } // NESTED CLASS END;
-    
+     
     /* Constructor: */
-    public Client(Socket newSocket) {
-        socket=newSocket;
+    public Client(String userName, ClientGUI cGUI) {
+        this.cGUI = cGUI;
+        this.userName = userName;
         connected=true;
-        clientThread = new ClientThread();
-        clientThread.start();
     }
     
     /* Methods: */
@@ -66,7 +33,46 @@ public class Client {
         return connected;
     }
     
-    public void removeClient() {
+    public void run() {
+        try {
+            socket = new Socket("localhost",SERVER_PORT);
+        } catch (IOException e) {
+            warning("Failed Connection to server!");
+        }
+        /* Connection Accepted*/
+        display("Connection accepted");
+        /* Start Object Streams */ 
+        try {
+            inGoing = new ObjectInputStream(socket.getInputStream());
+            outGoing = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            warning("Failed to Start Object Streams!");
+        }
+        
+        /* Start ServerThread Listener */
+        new ServerThread().start();
+        try {
+            outGoing.writeObject(userName);
+        } catch (IOException e) {
+            warning("Failed Sending Username!");
+        }
+    }
+    
+    void display(String msg) {
+        System.out.println(msg);
+        cGUI.append(msg);
+    }
+    
+    void warning(String msg) {
+        System.err.println(msg);
+        cGUI.append(msg);
+    }
+    
+    ClientGUI getGUI() {
+        return cGUI;
+    }
+    
+    void removeClient() {
         try {
             connected = false;
             socket.close();
@@ -81,10 +87,29 @@ public class Client {
     }
     
     public static void main(String[] args) {
-        try {
-            Client client = new Client(new Socket("localHost",45000));
-        } catch (IOException e) {
-            
+
+    }
+    
+    // NESTED CLASS START;
+    class ServerThread extends Thread {
+        
+        public void run() {
+            while(true) {
+                try {
+                    String msg = (String) inGoing.readObject();
+                    if (msg.startsWith("+add")) {
+                        cGUI.addToList(msg.substring(5,msg.length()));
+                        System.out.println("Added "+msg.substring(5,msg.length())+" to List");
+                    }
+                    else if (msg.startsWith("-remove")) {
+                        cGUI.removeFromList(msg.substring(7, msg.length()));
+                    }
+                    else cGUI.append(msg);
+                } catch (IOException | ClassNotFoundException e) {
+                    System.err.println("Failed Recieving Object from Server");
+                    return;
+                }
+            }
         }
     }
 }

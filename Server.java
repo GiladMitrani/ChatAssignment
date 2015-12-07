@@ -5,106 +5,160 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Server extends Thread {
-    
-    /* Publics: */
-    public static final int    SERVER_PORT = 45000; 
-    
+
     /* Privates: */
-    private static final long   SERVER_SLEEP = 200; 
-    private ServerSocket        serverSocket = null;    
-    private Socket              clientSocket = null;
-    private boolean             isStopped = false;              
-    private ArrayList<Client>   clients = new ArrayList<>();
+    private static final int            SERVER_PORT = 44000;
+    private ServerSocket                serverSocket;
+    private Socket                      clientSocket;
+    private boolean                     isStopped;
+    private ArrayList<ClientThread>     clients;
+    private ServerGUI                   sGUI;
 
     /* Constructor: */
-    public Server() {
+    public Server(ServerGUI sGUI) {
+        this.sGUI = sGUI;
+        serverSocket = null;
+        clientSocket = null;
+        isStopped = true;
+        clients = new ArrayList<ClientThread>();
+    }
+
+    /* Methods: */
+    public void run() {
+        isStopped = false;
         try {
             serverSocket = new ServerSocket(SERVER_PORT);
+            display("Server Socket Created!");
+            /* Main Connection Loop */
+            while (!isStopped()) {
+                /* Remove Lost Connections */
+                for (int i=0; i<clients.size(); i++) {
+                    
+                }
+                display("Server Waiting for Clients on Port: " + serverSocket.getLocalPort());
+                clientSocket = serverSocket.accept();
+                System.out.println("Socket accepted");
+                /* Client Successfully Connected */
+                display("Client Socket established on Port: " + clientSocket.getPort());
+                if (isStopped) {
+                    break;
+                }
+                ClientThread client = new ClientThread(clientSocket);
+                clients.add(client);
+                client.start();
+                client.outGoing.writeObject(new String("+add "+client.userName));
+            }
+            /* Server Stopped */
+            try {
+                serverSocket.close();
+                /* Close All Clients */
+                for (int i = 0; i < clients.size(); i++) {
+                    ClientThread client = clients.get(i);
+                    try {
+                        client.inGoing.close();
+                        client.outGoing.close();
+                        client.socket.close();
+                    } catch (IOException e) {
+                        System.err.println("Failed Closing Client Socket!");
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Failed Closing Server Socket!");
+            }
         } catch (IOException e) {
-            System.err.println("Cannot listen on this port.\n" + e.getMessage());
-            System.exit(-1);
+            System.err.println("Failed Initializing Server Socket!");
         }
-        /* Server Socket Create Successfully */
-        System.out.println("Socket " + serverSocket + " created succefully");
-        // TODO: add write to server Text area!
+    }
+
+    // TODO: BroadCast() send to all;
+    // TODO: Send() sends PM
+    void serverStop() {
+        isStopped = true;
+        // TODO: connect to myself ?
+    }
+
+    public static int getPort() {
+        return SERVER_PORT;
+    }
+
+    private void display(String msg) {
+        sGUI.append(msg);
+        System.out.println(msg);
+    }
+          
+    private synchronized void message(MessageProtocol msg) {
+        // TODO: Complete MessageProtocol Class
+    }
+
+    private synchronized void broadcast(MessageProtocol msg) {
+        // TODO: Complete MessageProtocol Class
     }
     
-   
-    /* Methods: */
-    @Override
-    public void run() {
-        /* Chat Room Created */
-        System.out.println("Room has been created!");
-        // TODO: add write to server Text area!
-
-        /* Main Listening Loop */
-        while (!isStopped()) {
-            // TODO: Remove disconnected clients;
-            
-            try {
-                clientSocket = serverSocket.accept(); // Listens and connects a new client socket
-            } catch (IOException e) { // accept() failed.
-                if (isStopped()) {
-                    System.out.println("Server Stopped!");
-                    return;
-                }
-                throw new RuntimeException(
-                        "Could not accept client!", e);    
-            }
-            
-            /* Client Successfully Connected */
-            System.out.println("Client "+clientSocket+"has connected");
-            // TODO: add write to server text area!
-            
-            /* Add New Client to List */
-            clients.add(new Client(clientSocket));
-            
-            /* Server Sleep */
-            try {
-                Thread.sleep(SERVER_SLEEP);
-            } catch (InterruptedException ex) {
-                System.out.println("Sleep interrupted! "+ex.getMessage());
-            }
-            
-            /* Server Code */
-            try {
-                PrintWriter outGoing = new PrintWriter(
-                        clientSocket.getOutputStream(), true);
-                BufferedReader inGoing = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
-                String msg;
-                while ((msg = inGoing.readLine()) != null) {
-                    // TODO: Implement writer to server text area;
-                    // TODO: Implement send PM;
-                    // TODO: Implement send all;
-                    // TODO: Implement stop server;
-                    
-                    /*
-                    General Idea:
-                    */
-                    
-                    outGoing.println(msg); // PlaceHolder
-                    
-                }
-                
-                outGoing.close();
-                inGoing.close();
-            } catch (IOException e) {
-                System.err.println("Error " + e.getMessage());
-            }
-        }
-
-        System.out.println("Server Stopped.");
-
+    private synchronized void remove(String userName) {
+        // TODO: Check need.
     }
 
     private synchronized boolean isStopped() {
         return this.isStopped;
     }
     
-    public static void main(String[] args) {
-        Server server = new Server();
-        server.start();
-    }
+    // NESTED CLASS START;
+    public class ClientThread extends Thread {
 
+        /* Privates: */
+        Socket              socket;
+        ObjectInputStream   inGoing;
+        ObjectOutputStream  outGoing;
+        String              userName;
+        MessageProtocol     msg;
+        boolean             isConnected;
+
+        /* Constructor: */
+        ClientThread(Socket newSocket) {
+            this.socket=newSocket;
+            /* Create Object Streams */
+            display("Initializing Input/Output Streams on Port: "+socket.getPort());
+            try {
+                outGoing = new ObjectOutputStream(socket.getOutputStream());
+                inGoing = new ObjectInputStream(socket.getInputStream());
+                userName = (String) inGoing.readObject();
+                display(userName+" Has Connected");
+                isConnected=true;
+            } catch (IOException e) {
+                System.err.println("Failed Creating Input/Output Streams!"); 
+            } catch (ClassNotFoundException e) {
+                System.err.println("Failed Recieving Username!");
+            }
+        }
+        
+        /* Methods: */
+        public void run() {
+            boolean running = true;
+            while (running) {
+                try {
+                    msg = (MessageProtocol) inGoing.readObject();
+                } catch (IOException | ClassNotFoundException e) {
+                    System.err.println("Failed Recieving Message From Client on Port: "+socket.getPort());
+                    return;
+                }
+                // TODO: switch/ifelse (msg)?
+            }
+            remove(userName);
+            try {
+                outGoing.close();
+                inGoing.close();
+                socket.close();
+            } catch (IOException e) {
+                System.err.println("Failed Closing "+userName);
+            }
+        }
+        
+        private void sendString(String msg) {
+            try {
+                outGoing.writeObject(msg);
+            } catch (IOException e) {
+                System.err.println("Failed Sending String to "+userName);
+            }
+        }
+    } // NESTED CLASS END;
 }

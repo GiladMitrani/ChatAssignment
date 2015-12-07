@@ -1,25 +1,20 @@
 package ChatAssignment;
 
-import java.net.InetAddress;
-
 /**
  *
  * @author Hazir
  */
 public class ServerGUI extends javax.swing.JFrame {
     
-    InetAddress localHost;
+    Server server;
 
     /**
      * Creates new form ServerGUI
      */
     public ServerGUI() {
-        try {
-            localHost = InetAddress.getLocalHost();
-        } catch (Exception e) {
-            System.err.println("Failed getting local host!");
-        }
         initComponents();
+        server = new Server(this);
+        server.start();
     }
 
     /**
@@ -43,6 +38,11 @@ public class ServerGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         ButtonStart.setText("Start");
+        ButtonStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonStartActionPerformed(evt);
+            }
+        });
 
         ServerLog.setEditable(false);
         ServerLog.setColumns(20);
@@ -50,12 +50,15 @@ public class ServerGUI extends javax.swing.JFrame {
         jScrollPane1.setViewportView(ServerLog);
 
         ButtonStop.setText("Stop");
+        ButtonStop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonStopActionPerformed(evt);
+            }
+        });
 
         jTextField1.setEditable(false);
-        jTextField1.setText(Integer.toString(Server.SERVER_PORT));
 
         jTextField2.setEditable(false);
-        jTextField2.setText(localHost.getHostAddress());
 
         jLabel1.setText("Port:");
 
@@ -73,7 +76,7 @@ public class ServerGUI extends javax.swing.JFrame {
                         .addComponent(ButtonStart)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButtonStop)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 193, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 341, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -101,6 +104,17 @@ public class ServerGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStartActionPerformed
+//        server.start();
+//        ButtonStart.setEnabled(false);
+    }//GEN-LAST:event_ButtonStartActionPerformed
+
+    private void ButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStopActionPerformed
+//        server.serverStop();
+//        ButtonStart.setEnabled(true);
+//        ButtonStop.setEnabled(false);
+    }//GEN-LAST:event_ButtonStopActionPerformed
 
     /**
      * @param args the command line arguments
@@ -135,6 +149,11 @@ public class ServerGUI extends javax.swing.JFrame {
                 new ServerGUI().setVisible(true);
             }
         });
+    }
+    
+    void append(String msg) {
+        // TODO: add time stamp
+        ServerLog.append("> "+msg+"\n");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
