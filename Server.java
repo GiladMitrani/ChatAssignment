@@ -4,10 +4,10 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-public class Server {
+public class Server extends Thread {
 
     /* Privates: */
-    private static final int            SERVER_PORT = 45000;
+    private static final int            SERVER_PORT = 44000;
     private ServerSocket                serverSocket;
     private Socket                      clientSocket;
     private boolean                     isStopped;
@@ -24,14 +24,19 @@ public class Server {
     }
 
     /* Methods: */
-    public void start() {
+    public void run() {
         isStopped = false;
         try {
             serverSocket = new ServerSocket(SERVER_PORT);
             display("Server Socket Created!");
             /* Main Connection Loop */
             while (!isStopped()) {
-                // TODO: Remove disconnected clients;
+                /* Remove Lost Connections */
+                for (int i=0; i<clients.size(); i++) {
+                    if (clients.get(i)) {
+                        
+                    }
+                }
                 display("Server Waiting for Clients on Port: " + serverSocket.getLocalPort());
                 clientSocket = serverSocket.accept();
                 System.out.println("Socket accepted");
@@ -102,11 +107,12 @@ public class Server {
     public class ClientThread extends Thread {
 
         /* Privates: */
-        Socket socket;
-        ObjectInputStream inGoing;
-        ObjectOutputStream outGoing;
-        String userName;
-        MessageProtocol msg;
+        Socket              socket;
+        ObjectInputStream   inGoing;
+        ObjectOutputStream  outGoing;
+        String              userName;
+        MessageProtocol     msg;
+        boolean             isConnected;
 
         /* Constructor: */
         ClientThread(Socket newSocket) {
@@ -117,6 +123,8 @@ public class Server {
                 outGoing = new ObjectOutputStream(socket.getOutputStream());
                 inGoing = new ObjectInputStream(socket.getInputStream());
                 userName = (String) inGoing.readObject();
+                display(userName+" Has Connected");
+                isConnected=true;
             } catch (IOException e) {
                 System.err.println("Failed Creating Input/Output Streams!"); 
             } catch (ClassNotFoundException e) {

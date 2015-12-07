@@ -3,9 +3,10 @@ package ChatAssignment;
 import java.io.*;
 import java.net.*;
 
-public class Client {
+public class Client extends Thread {
     
     /* Privates: */        
+    private int                 SERVER_PORT = 44000;
     private ObjectInputStream   inGoing;
     private ObjectOutputStream  outGoing;
     private String              userName;
@@ -21,7 +22,6 @@ public class Client {
             // TODO: Implement leave server
      
     /* Constructor: */
-       
     public Client(String userName, ClientGUI cGUI) {
         this.cGUI = cGUI;
         this.userName = userName;
@@ -33,19 +33,38 @@ public class Client {
         return connected;
     }
     
-    public boolean start() {
+    public void run() {
         try {
-            socket = new Socket("localhost",45000);
+            socket = new Socket("localhost",SERVER_PORT);
         } catch (IOException e) {
-            System.err.println("Failed Connection to server!");
-            return false;
+            warning("Failed Connection to server!");
+        }
+        /* Connection Accepted*/
+        display("Connection accepted");
+        /* Start Object Streams */ 
+        try {
+            inGoing = new ObjectInputStream(socket.getInputStream());
+            outGoing = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            warning("Failed to Start Object Streams!");
         }
         
-        return true;
+        /* Start ServerThread Listener */
+        new ServerThread().start();
+        try {
+            outGoing.writeObject(userName);
+        } catch (IOException e) {
+            warning("Failed Sending Username!");
+        }
     }
     
     void display(String msg) {
         System.out.println(msg);
+        cGUI.append(msg);
+    }
+    
+    void warning(String msg) {
+        System.err.println(msg);
         cGUI.append(msg);
     }
     
@@ -69,5 +88,21 @@ public class Client {
     
     public static void main(String[] args) {
 
+    }
+    
+    // NESTED CLASS START;
+    class ServerThread extends Thread {
+        
+        public void run() {
+            while(true) {
+                try {
+                    String msg = (String) inGoing.readObject();
+                    cGUI.append(msg);
+                } catch (IOException | ClassNotFoundException e) {
+                    System.err.println("Failed Recieving Object from Server");
+                    return;
+                }
+            }
+        }
     }
 }

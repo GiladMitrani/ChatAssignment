@@ -14,6 +14,11 @@ public class MessageProtocol {
     String message;
     int typeOfMessage;
 
+    public MessageProtocol() {
+    
+    }
+
+    
     public MessageProtocol(String message, int typeOfMessage) {
         this.message = message;
         this.typeOfMessage = typeOfMessage;

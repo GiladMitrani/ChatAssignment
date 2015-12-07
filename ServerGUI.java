@@ -1,20 +1,20 @@
 package ChatAssignment;
 
-import java.net.InetAddress;
-
 /**
  *
  * @author Hazir
  */
 public class ServerGUI extends javax.swing.JFrame {
     
-    static Server server;
+    Server server;
 
     /**
      * Creates new form ServerGUI
      */
     public ServerGUI() {
         initComponents();
+        server = new Server(this);
+        server.start();
     }
 
     /**
@@ -106,14 +106,14 @@ public class ServerGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStartActionPerformed
-        server.start();
-        ButtonStart.setEnabled(false);
+//        server.start();
+//        ButtonStart.setEnabled(false);
     }//GEN-LAST:event_ButtonStartActionPerformed
 
     private void ButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStopActionPerformed
-        server.serverStop();
-        ButtonStart.setEnabled(true);
-        ButtonStop.setEnabled(false);
+//        server.serverStop();
+//        ButtonStart.setEnabled(true);
+//        ButtonStop.setEnabled(false);
     }//GEN-LAST:event_ButtonStopActionPerformed
 
     /**
@@ -147,8 +147,6 @@ public class ServerGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ServerGUI().setVisible(true);
-                server = new Server(this);
-                server.start();
             }
         });
     }
