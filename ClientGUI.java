@@ -1,7 +1,9 @@
 package ChatAssignment;
 
+
 import java.awt.event.ActionEvent;
 import java.io.Serializable;
+import javax.swing.DefaultListSelectionModel;
 
 public class ClientGUI extends javax.swing.JFrame implements Serializable {
     
@@ -43,7 +45,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
         jLabel5 = new javax.swing.JLabel();
         ButtonDisconnect = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
-        OnlineList = new javax.swing.JList<String>();
+        OnlineList = new javax.swing.JList<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         ClientLog = new javax.swing.JTextArea();
         jScrollBar1 = new javax.swing.JScrollBar();
@@ -84,11 +86,12 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
             }
         });
 
-        OnlineList.setModel(new javax.swing.AbstractListModel() {
+        OnlineList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+            public String getElementAt(int i) { return strings[i]; }
         });
+        OnlineList.setSelectionModel(new ToggleSelectionModel());
         jScrollPane6.setViewportView(OnlineList);
 
         ClientLog.setEditable(false);
@@ -271,4 +274,16 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JTextPane jTextPane3;
     // End of variables declaration//GEN-END:variables
+
+    class ToggleSelectionModel extends DefaultListSelectionModel {
+        public void setSelectionInterval(int index0, int index1) {
+            if (isSelectedIndex(index0)) {
+                super.removeSelectionInterval(index0, index1);
+            }
+            else {
+                super.setSelectionInterval(index0, index1);
+            }
+        }
+    } 
 }
+

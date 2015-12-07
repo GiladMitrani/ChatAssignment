@@ -33,9 +33,7 @@ public class Server extends Thread {
             while (!isStopped()) {
                 /* Remove Lost Connections */
                 for (int i=0; i<clients.size(); i++) {
-                    if (clients.get(i)) {
-                        
-                    }
+                    
                 }
                 display("Server Waiting for Clients on Port: " + serverSocket.getLocalPort());
                 clientSocket = serverSocket.accept();
