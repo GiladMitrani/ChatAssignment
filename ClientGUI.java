@@ -13,7 +13,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
     public ClientGUI() {
         initComponents();
         try {
-        client = new Client(new Socket("localhost",45000),this);
+//        client = new Client(new Socket("localhost",45000),this);
         } catch (Exception e) {
             System.err.println("Failed Creating Client!");
         }

@@ -3,78 +3,29 @@ package ChatAssignment;
 import java.io.*;
 import java.net.*;
 
-public class Client implements Serializable {
-    
-    /* Serial: */
-    protected static final long SerialVersionUID = 1113377L;
+public class Client {
     
     /* Privates: */        
-    private static final long   CLIENT_SLEEP = 200;
-            Socket              socket;      
+    private ObjectInputStream   inGoing;
+    private ObjectOutputStream  outGoing;
+    private String              userName;
+    private Socket              socket;      
     private boolean             connected;
-            ClientThread        clientThread;
     private ClientGUI           cGUI;
     
-    // NESTED CLASS START;
-    public class ClientThread extends Thread {
-        
-        /* Privates: */
-        ObjectInputStream in;
-        ObjectOutputStream out;
-        
-        /* Methods: */
-        @Override
-        public void run() {
-            display("Setting up input and output");
-            try {
-                out = new ObjectOutputStream(socket.getOutputStream());
-                display("Successfully Connected Output");
-//                in  = new ObjectInputStream(socket.getInputStream());
-//                display("Successfully Connected Input");
-            } catch (IOException e) {
-                System.err.println("Failed getting stream from "+this);
-                return;
-            }
-            System.out.println("aaa");
-            
-            /* Stream Successfully Connected */
-            display(this+" has succesfully connected input and output");
-            // TODO: Implement communication to server TextArea;
-            
-            /* Client Send Data to Server */ 
-            display("Trying to send Client Data");
-            try {
-            out.writeObject(Client.this);
-            } catch (IOException e) {
-                System.err.println("Failed Sending Client Data!");
-            }
-            display("Client Data Sent Successfully!");
-                     
-            /* Client Sleep */
-            try {
-                Thread.sleep(CLIENT_SLEEP);
-            } catch (InterruptedException ex) {
-                System.err.println(this+" has input interruption");
-            } 
-        }
-    } // NESTED CLASS END;
+    
     
     /* Client Code */ 
             // TODO: Implement send message
             // TODO: Implement recieve TextArea
             // TODO: Implement leave server
-            
-            // PlaceHolder:
-//            PrintWriter outGoing = new PrintWriter(out, true);
-//            BufferedReader inGoing = new BufferedReader(new InputStreamReader(in));
-    
+     
     /* Constructor: */
        
-    public Client(Socket newSocket, ClientGUI cGUI) {
+    public Client(String userName, ClientGUI cGUI) {
         this.cGUI = cGUI;
-        socket=newSocket;
+        this.userName = userName;
         connected=true;
-        clientThread = new ClientThread();
     }
     
     /* Methods: */
@@ -82,8 +33,15 @@ public class Client implements Serializable {
         return connected;
     }
     
-    public void start() {
-        clientThread.start();
+    public boolean start() {
+        try {
+            socket = new Socket("localhost",45000);
+        } catch (IOException e) {
+            System.err.println("Failed Connection to server!");
+            return false;
+        }
+        
+        return true;
     }
     
     void display(String msg) {
@@ -99,8 +57,6 @@ public class Client implements Serializable {
         try {
             connected = false;
             socket.close();
-            this.clientThread.in.close();
-            this.clientThread.out.close();
         } catch (IOException e) {
             System.err.println("Failed to close "+this);
         }
