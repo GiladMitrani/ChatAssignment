@@ -10,7 +10,7 @@ package ChatAssignment;
  * @author YaronK
  */
 public class MessageProtocol {
-    final static int textMessage = 0, whoIsInMessage=1, disconnectMessage=2; 
+    final static int textMessage = 0,disconnectMessage=1; 
     String message;
     int typeOfMessage;
 
