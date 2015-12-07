@@ -1,10 +1,12 @@
 package ChatAssignment;
 
+import java.awt.event.ActionEvent;
 import java.io.Serializable;
 import java.net.Socket;
+import mychat.newChat.ChatMessage;
 
 public class ClientGUI extends javax.swing.JFrame implements Serializable {
-    
+
     static Client client;
 
     /**
@@ -13,7 +15,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
     public ClientGUI() {
         initComponents();
         try {
-        client = new Client(new Socket("localhost",45000),this);
+            client = new Client(new Socket("localhost", 45000), this);
         } catch (Exception e) {
             System.err.println("Failed Creating Client!");
         }
@@ -34,7 +36,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         ButtonSend = new javax.swing.JButton();
-        TextField = new javax.swing.JTextField();
+        TextUserInput = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextPane2 = new javax.swing.JTextPane();
         jLabel2 = new javax.swing.JLabel();
@@ -45,7 +47,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
         jLabel5 = new javax.swing.JLabel();
         ButtonDisconnect = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
-        OnlineList = new javax.swing.JList<>();
+        OnlineList = new javax.swing.JList<String>();
         jScrollPane1 = new javax.swing.JScrollPane();
         ClientLog = new javax.swing.JTextArea();
         jScrollBar1 = new javax.swing.JScrollBar();
@@ -60,7 +62,12 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
 
         ButtonSend.setText("send");
 
-        TextField.setText("User Input");
+        TextUserInput.setText("User Input");
+        TextUserInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TextUserInputActionPerformed(evt);
+            }
+        });
 
         jScrollPane3.setViewportView(jTextPane2);
 
@@ -81,10 +88,10 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
             }
         });
 
-        OnlineList.setModel(new javax.swing.AbstractListModel<String>() {
+        OnlineList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+            public Object getElementAt(int i) { return strings[i]; }
         });
         jScrollPane6.setViewportView(OnlineList);
 
@@ -104,7 +111,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(ButtonConnect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(ButtonDisconnect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -118,15 +125,17 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TextField)
+                    .addComponent(TextUserInput)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel1))
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 168, Short.MAX_VALUE))
@@ -167,7 +176,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
                     .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TextUserInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ButtonSend))
                 .addContainerGap())
         );
@@ -178,6 +187,10 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
     private void ButtonDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonDisconnectActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ButtonDisconnectActionPerformed
+
+    private void TextUserInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextUserInputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TextUserInputActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,10 +227,29 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
             }
         });
     }
-    
+
     void append(String msg) {
         // TODO: add time stamp
-        ClientLog.append(">"+msg+"\n");
+        ClientLog.append(">" + msg + "\n");
+    }
+    /*
+    method that convert pressing to massage;
+    */
+    public void MessageConvert(ActionEvent e) {
+        Object button = e.getSource();
+        MessageProtocol message = new MessageProtocol();
+        // user press the Disconnect button
+        if (button == ButtonDisconnect) {
+            message.typeOfMessage = message.disconnectMessage;
+            message.message = "";
+            return;
+        }
+        // user press send
+        if (button == ButtonSend)
+            
+            message.typeOfMessage = message.textMessage;
+            message.message =TextUserInput.getText();
+            return;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -226,7 +258,7 @@ public class ClientGUI extends javax.swing.JFrame implements Serializable {
     private javax.swing.JButton ButtonSend;
     private javax.swing.JTextArea ClientLog;
     private javax.swing.JList<String> OnlineList;
-    private javax.swing.JTextField TextField;
+    private javax.swing.JTextField TextUserInput;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
