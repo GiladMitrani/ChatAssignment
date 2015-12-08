@@ -4,6 +4,9 @@ package ChatAssignment;
 import java.awt.event.ActionEvent;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JList;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 public class ClientGUI extends javax.swing.JFrame {
     
@@ -32,20 +35,20 @@ public class ClientGUI extends javax.swing.JFrame {
         ButtonConnect = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        TextIP = new javax.swing.JTextPane();
         ButtonSend = new javax.swing.JButton();
         TextUserInput = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
+        TextName = new javax.swing.JTextPane();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextPane3 = new javax.swing.JTextPane();
+        TextPort = new javax.swing.JTextPane();
         jLabel5 = new javax.swing.JLabel();
         ButtonDisconnect = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
-        OnlineList = new javax.swing.JList<>();
+        OnlineList = new javax.swing.JList<String>();
         jScrollPane1 = new javax.swing.JScrollPane();
         ClientLog = new javax.swing.JTextArea();
         jScrollBar1 = new javax.swing.JScrollBar();
@@ -56,9 +59,14 @@ public class ClientGUI extends javax.swing.JFrame {
 
         jLabel1.setText("Name:");
 
-        jScrollPane2.setViewportView(jTextPane1);
+        jScrollPane2.setViewportView(TextIP);
 
         ButtonSend.setText("send");
+        ButtonSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonSendActionPerformed(evt);
+            }
+        });
 
         TextUserInput.setText("User Input");
         TextUserInput.addActionListener(new java.awt.event.ActionListener() {
@@ -67,7 +75,7 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
 
-        jScrollPane3.setViewportView(jTextPane2);
+        jScrollPane3.setViewportView(TextName);
 
         jLabel2.setText("Online:");
 
@@ -75,7 +83,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
         jLabel4.setText("IP:");
 
-        jScrollPane4.setViewportView(jTextPane3);
+        jScrollPane4.setViewportView(TextPort);
 
         jLabel5.setText("Port:");
 
@@ -187,6 +195,10 @@ public class ClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_TextUserInputActionPerformed
 
+    private void ButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSendActionPerformed
+        client.sendMessage();
+    }//GEN-LAST:event_ButtonSendActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -206,6 +218,8 @@ public class ClientGUI extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         
@@ -236,6 +250,7 @@ public class ClientGUI extends javax.swing.JFrame {
         // TODO: add time stamp
         ClientLog.append("> "+msg+"\n");
     }
+     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonConnect;
@@ -243,6 +258,9 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton ButtonSend;
     private javax.swing.JTextArea ClientLog;
     private javax.swing.JList<String> OnlineList;
+    private javax.swing.JTextPane TextIP;
+    private javax.swing.JTextPane TextName;
+    private javax.swing.JTextPane TextPort;
     private javax.swing.JTextField TextUserInput;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -255,9 +273,6 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
-    private javax.swing.JTextPane jTextPane3;
     // End of variables declaration//GEN-END:variables
 
     class ToggleSelectionModel extends DefaultListSelectionModel {
@@ -270,6 +285,20 @@ public class ClientGUI extends javax.swing.JFrame {
                 super.setSelectionInterval(index0, index1);
             }
         }
-    } 
+    }
+    
+    
+    public JTextField getTextUserInput() {
+        return TextUserInput;
+    }
+
+    public JTextPane getTextName() {
+        return TextName;
+    }
+
+    public JList<String> getOnlineList() {
+        return OnlineList;
+    }
+    
 }
 

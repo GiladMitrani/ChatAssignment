@@ -43,4 +43,9 @@ public class MessageProtocol {
     public String getSender() {
         return sender;
     }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+    
 }

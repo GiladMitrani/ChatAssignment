@@ -144,7 +144,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextPane" name="jTextPane1">
+        <Component class="javax.swing.JTextPane" name="TextIP">
         </Component>
       </SubComponents>
     </Container>
@@ -152,6 +152,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="send"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonSendActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="TextUserInput">
       <Properties>
@@ -168,7 +171,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextPane" name="jTextPane2">
+        <Component class="javax.swing.JTextPane" name="TextName">
         </Component>
       </SubComponents>
     </Container>
@@ -194,7 +197,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextPane" name="jTextPane3">
+        <Component class="javax.swing.JTextPane" name="TextPort">
         </Component>
       </SubComponents>
     </Container>
