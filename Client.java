@@ -11,28 +11,15 @@ public class Client extends Thread {
     private ObjectOutputStream  outGoing;
     private String              userName;
     private Socket              socket;      
-    private boolean             connected;
     private ClientGUI           cGUI;
     
-    
-    
-    /* Client Code */ 
-            // TODO: Implement send message
-            // TODO: Implement recieve TextArea
-            // TODO: Implement leave server
-     
     /* Constructor: */
     public Client(String userName, ClientGUI cGUI) {
         this.cGUI = cGUI;
         this.userName = userName;
-        connected=true;
     }
     
     /* Methods: */
-    public boolean isConnected() {
-        return connected;
-    }
-    
     public void run() {
         try {
             socket = new Socket("localhost",SERVER_PORT);
@@ -40,7 +27,7 @@ public class Client extends Thread {
             warning("Failed Connection to server!");
         }
         /* Connection Accepted*/
-        display("Connection accepted");
+        log("Connection accepted");
         /* Start Object Streams */ 
         try {
             inGoing = new ObjectInputStream(socket.getInputStream());
@@ -57,8 +44,8 @@ public class Client extends Thread {
             warning("Failed Sending Username!");
         }
     }
-    
-    void display(String msg) {
+     
+    void log(String msg) {
         System.out.println(msg);
         cGUI.append(msg);
     }
@@ -68,16 +55,24 @@ public class Client extends Thread {
         cGUI.append(msg);
     }
     
-    ClientGUI getGUI() {
-        return cGUI;
-    }
-    
     void removeClient() {
         try {
-            connected = false;
+            /* Log Off Message */
+            outGoing.writeObject(new MessageProtocol(0,null,null,null));
+            /* Close Connections*/ 
+            outGoing.close();
+            inGoing.close();
             socket.close();
         } catch (IOException e) {
-            System.err.println("Failed to close "+this);
+            warning("Failed to Remove "+this);
+        }
+    }
+    
+    void transmit() {
+        try {
+            outGoing.writeObject(cGUI.messageFormat());
+        } catch (Exception e) {
+            warning("Failed Sending Message");
         }
     }
     
@@ -86,27 +81,34 @@ public class Client extends Thread {
         return socket.toString();
     }
     
-    public static void main(String[] args) {
-
-    }
-    
     // NESTED CLASS START;
     class ServerThread extends Thread {
         
+        // TODO: Never stops.
+        
+        /* Methods: */
         public void run() {
             while(true) {
                 try {
-                    String msg = (String) inGoing.readObject();
-                    if (msg.startsWith("+add")) {
-                        cGUI.addToList(msg.substring(5,msg.length()));
-                        System.out.println("Added "+msg.substring(5,msg.length())+" to List");
+                    /* Read Transmit */
+                    MessageProtocol msg = (MessageProtocol) inGoing.readObject();
+                    System.out.println("Recieved Object!");
+                    /* Interpet Transmission */
+                    switch (msg.getType()) {
+                        case MessageProtocol.ADD:
+                            cGUI.addToList(msg.getData());
+                            System.out.println("Added "+msg.getData()+" to List");
+                            break;
+                        case MessageProtocol.REMOVE:
+                            cGUI.removeFromList(msg.getData());
+                            System.out.println("Removed "+msg.getData()+" from List");
+                            break;
+                        default:
+                            cGUI.append(msg.toString());
+                            break;
                     }
-                    else if (msg.startsWith("-remove")) {
-                        cGUI.removeFromList(msg.substring(7, msg.length()));
-                    }
-                    else cGUI.append(msg);
                 } catch (IOException | ClassNotFoundException e) {
-                    System.err.println("Failed Recieving Object from Server");
+                    warning("Failed Recieving Transmit from Server");
                     return;
                 }
             }
