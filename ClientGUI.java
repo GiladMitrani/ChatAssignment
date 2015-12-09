@@ -12,7 +12,7 @@ public class ClientGUI extends javax.swing.JFrame {
     
     static DefaultListModel dynamicList = new DefaultListModel();
     static Client client;
-    String userName="Gilad3";
+    String userName="Yaron";
 
     /**
      * Creates new form Client_interface
