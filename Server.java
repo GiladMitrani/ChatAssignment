@@ -43,17 +43,12 @@ public class Server extends Thread {
                 }
                 /* Create new ClientThread */
                 ClientThread client = new ClientThread(clientSocket);
-                /* Send OnlineList to Client*/
-                client.start();
-                for (ClientThread currentClient : clients) {
-                    client.transmit(MessageProtocol.add(currentClient.userName));
-                }
                 clients.add(client);
-                /* Update Client in OnlineList */
+                client.start();
+                /* Update OnlineList */
                 for (ClientThread currentClient : clients) {
                     currentClient.transmit(MessageProtocol.add(client.userName));
                 }
-
             }
             /* Server Stopped */
             try {
