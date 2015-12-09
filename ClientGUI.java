@@ -12,7 +12,7 @@ public class ClientGUI extends javax.swing.JFrame {
     
     static DefaultListModel dynamicList = new DefaultListModel();
     static Client client;
-    String userName="Gilad";
+    String userName="Gilad3";
 
     /**
      * Creates new form Client_interface
@@ -69,11 +69,6 @@ public class ClientGUI extends javax.swing.JFrame {
         });
 
         TextUserInput.setText("User Input");
-        TextUserInput.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TextUserInputActionPerformed(evt);
-            }
-        });
 
         jScrollPane3.setViewportView(TextName);
 
@@ -188,9 +183,10 @@ public class ClientGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ButtonDisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonDisconnectActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_ButtonDisconnectActionPerformed
 
+<<<<<<< HEAD
     private void TextUserInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextUserInputActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TextUserInputActionPerformed
@@ -199,6 +195,8 @@ public class ClientGUI extends javax.swing.JFrame {
         client.sendMessage();
     }//GEN-LAST:event_ButtonSendActionPerformed
 
+=======
+>>>>>>> origin/master
     /**
      * @param args the command line arguments
      */
@@ -234,6 +232,15 @@ public class ClientGUI extends javax.swing.JFrame {
         });
     }
     
+    public MessageProtocol messageFormat() {
+        boolean rob = OnlineList.getSelectedIndex()==-1; // Relay or Broadcast
+        return new MessageProtocol(
+                (rob)?1:2,                      // Type [Broadcast(1), Relay(2)]
+                TextUserInput.getText(),        // Message Text
+                OnlineList.getSelectedValue(),  // Destination (null on Broadcast)
+                TextName.getText());            // Client Username
+    }
+    
     void addToList(Object element) {
         dynamicList.addElement(element);
     }
@@ -250,17 +257,25 @@ public class ClientGUI extends javax.swing.JFrame {
         // TODO: add time stamp
         ClientLog.append("> "+msg+"\n");
     }
+<<<<<<< HEAD
      
     
+=======
+        
+>>>>>>> origin/master
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonConnect;
     private javax.swing.JButton ButtonDisconnect;
     private javax.swing.JButton ButtonSend;
     private javax.swing.JTextArea ClientLog;
     private javax.swing.JList<String> OnlineList;
+<<<<<<< HEAD
     private javax.swing.JTextPane TextIP;
     private javax.swing.JTextPane TextName;
     private javax.swing.JTextPane TextPort;
+=======
+    private javax.swing.JTextPane TextName;
+>>>>>>> origin/master
     private javax.swing.JTextField TextUserInput;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -273,6 +288,11 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
+<<<<<<< HEAD
+=======
+    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JTextPane jTextPane3;
+>>>>>>> origin/master
     // End of variables declaration//GEN-END:variables
 
     class ToggleSelectionModel extends DefaultListSelectionModel {

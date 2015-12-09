@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 
 public class Client extends Thread {
+<<<<<<< HEAD
 
     /* Privates: */
     private int SERVER_PORT = 44000;
@@ -18,18 +19,35 @@ public class Client extends Thread {
             // TODO: Implement send message
     // TODO: Implement recieve TextArea
     // TODO: Implement leave server
+=======
+    
+    /* Privates: */        
+    private int                 SERVER_PORT = 44000;
+    private ObjectInputStream   inGoing;
+    private ObjectOutputStream  outGoing;
+    private String              userName;
+    private Socket              socket;      
+    private ClientGUI           cGUI;
+    
+>>>>>>> origin/master
     /* Constructor: */
     public Client(String userName, ClientGUI cGUI) {
         this.cGUI = cGUI;
         this.userName = userName;
+<<<<<<< HEAD
         connected = true;
+=======
+>>>>>>> origin/master
     }
 
     /* Methods: */
+<<<<<<< HEAD
     public boolean isConnected() {
         return connected;
     }
 
+=======
+>>>>>>> origin/master
     public void run() {
         try {
             socket = new Socket("localhost", SERVER_PORT);
@@ -37,8 +55,13 @@ public class Client extends Thread {
             warning("Failed Connection to server!");
         }
         /* Connection Accepted*/
+<<<<<<< HEAD
         display("Connection accepted");
         /* Start Object Streams */
+=======
+        log("Connection accepted");
+        /* Start Object Streams */ 
+>>>>>>> origin/master
         try {
             inGoing = new ObjectInputStream(socket.getInputStream());
             outGoing = new ObjectOutputStream(socket.getOutputStream());
@@ -54,8 +77,13 @@ public class Client extends Thread {
             warning("Failed Sending Username!");
         }
     }
+<<<<<<< HEAD
 
     void display(String msg) {
+=======
+     
+    void log(String msg) {
+>>>>>>> origin/master
         System.out.println(msg);
         cGUI.append(msg);
     }
@@ -64,17 +92,37 @@ public class Client extends Thread {
         System.err.println(msg);
         cGUI.append(msg);
     }
+<<<<<<< HEAD
 
     ClientGUI getGUI() {
         return cGUI;
     }
 
+=======
+    
+>>>>>>> origin/master
     void removeClient() {
         try {
-            connected = false;
+            /* Log Off Message */
+            outGoing.writeObject(new MessageProtocol(0,null,null,null));
+            /* Close Connections*/ 
+            outGoing.close();
+            inGoing.close();
             socket.close();
         } catch (IOException e) {
+<<<<<<< HEAD
             System.err.println("Failed to close " + this);
+=======
+            warning("Failed to Remove "+this);
+        }
+    }
+    
+    void transmit() {
+        try {
+            outGoing.writeObject(cGUI.messageFormat());
+        } catch (Exception e) {
+            warning("Failed Sending Message");
+>>>>>>> origin/master
         }
     }
 
@@ -82,6 +130,7 @@ public class Client extends Thread {
     public String toString() {
         return socket.toString();
     }
+<<<<<<< HEAD
 
     public static void main(String[] args) {
 
@@ -90,9 +139,19 @@ public class Client extends Thread {
     // NESTED CLASS START;
     class ServerThread extends Thread {
 
+=======
+    
+    // NESTED CLASS START;
+    class ServerThread extends Thread {
+        
+        // TODO: Never stops.
+        
+        /* Methods: */
+>>>>>>> origin/master
         public void run() {
             while (true) {
                 try {
+<<<<<<< HEAD
                     String msg = (String) inGoing.readObject();
                     if (msg.startsWith("+add")) {
                         cGUI.addToList(msg.substring(5, msg.length()));
@@ -101,9 +160,27 @@ public class Client extends Thread {
                         cGUI.removeFromList(msg.substring(7, msg.length()));
                     } else {
                         cGUI.append(msg);
+=======
+                    /* Read Transmit */
+                    MessageProtocol msg = (MessageProtocol) inGoing.readObject();
+                    System.out.println("Recieved Object!");
+                    /* Interpet Transmission */
+                    switch (msg.getType()) {
+                        case MessageProtocol.ADD:
+                            cGUI.addToList(msg.getData());
+                            System.out.println("Added "+msg.getData()+" to List");
+                            break;
+                        case MessageProtocol.REMOVE:
+                            cGUI.removeFromList(msg.getData());
+                            System.out.println("Removed "+msg.getData()+" from List");
+                            break;
+                        default:
+                            cGUI.append(msg.toString());
+                            break;
+>>>>>>> origin/master
                     }
                 } catch (IOException | ClassNotFoundException e) {
-                    System.err.println("Failed Recieving Object from Server");
+                    warning("Failed Recieving Transmit from Server");
                     return;
                 }
             }

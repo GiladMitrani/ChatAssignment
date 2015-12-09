@@ -111,9 +111,9 @@ public class ServerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_ButtonStartActionPerformed
 
     private void ButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStopActionPerformed
-//        server.serverStop();
-//        ButtonStart.setEnabled(true);
-//        ButtonStop.setEnabled(false);
+        server.serverStop();
+        ButtonStart.setEnabled(true);
+        ButtonStop.setEnabled(false);
     }//GEN-LAST:event_ButtonStopActionPerformed
 
     /**
